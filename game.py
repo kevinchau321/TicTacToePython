@@ -86,5 +86,5 @@ def display_game_info():
     print "By Daniel Anderson\n"
     print "I hope you came readycoord to play\n"
 
-#excoordecuting the game
+#executing the game
 Game()
