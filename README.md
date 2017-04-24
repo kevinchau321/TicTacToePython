@@ -1,6 +1,12 @@
 # TicTacToePython
 A console tic tac toe game created with python
 
+##Requirnments
+-Python
+
+## To Run
+- Run `python game.py`
+
 ### TODO:
 -Fix print board to display the Game Board with x, y Values
 
