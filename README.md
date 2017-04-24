@@ -5,10 +5,9 @@ A console tic tac toe game created with python
 -Fix print board to display the Game Board with x, y Values
 
 -Figure out how to find the best possible move for the computer
-    
-   At clone method to the game board (make it immutable)
 
-   Create a min/max tree which stores a game board + current player
+->At clone method to the game board (make it immutable)
+->Create a min/max tree which stores a game board + current player
 
 -Clean the game run output, make it friendly to the eyes
 
