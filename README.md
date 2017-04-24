@@ -1,7 +1,7 @@
 # TicTacToePython
 A console tic tac toe game created with python
 
-##Requirnments
+## Requirnments
 -Python
 
 ## To Run
