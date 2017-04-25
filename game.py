@@ -52,8 +52,8 @@ class Game(object):
             if self.curr_player == 1:
                 print "It is currently your turn " + self.player_name
                 print "Good Luck."
-                xcoord = int(raw_input("Please input the xcoord coordinate of your move"))
-                ycoord = int(raw_input("Please input the ycoord coordinate of your move"))
+                xcoord = int(raw_input("Please input the x coordinate of your move"))
+                ycoord = int(raw_input("Please input the y coordinate of your move"))
                 if xcoord in [0, 1, 2] and ycoord in [0, 1, 2]:
                     if self.board.can_put(xcoord, ycoord):
                         self.board.put(xcoord, ycoord, self.curr_player)
