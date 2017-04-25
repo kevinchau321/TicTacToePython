@@ -1,0 +1,231 @@
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
+<script src="http://www.skulpt.org/static/skulpt.min.js" type="text/javascript"></script>
+<script src="http://www.skulpt.org/static/skulpt-stdlib.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+// output functions are configurable.  This one just appends some text
+// to a pre element.
+function outf(text) {
+    var mypre = document.getElementById("output");
+    mypre.innerHTML = mypre.innerHTML + text;
+}
+function builtinRead(x) {
+    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+            throw "File not found: '" + x + "'";
+    return Sk.builtinFiles["files"][x];
+}
+// Here's everything you need to run a python program in skulpt
+// grab the code from your textarea
+// get a reference to your pre element for output
+// configure the output function
+// call Sk.importMainWithBody()
+function runit() {
+   var prog = document.getElementById("yourcode").value;
+   var mypre = document.getElementById("output");
+   mypre.innerHTML = '';
+   Sk.pre = "output";
+   Sk.configure({output:outf, read:builtinRead});
+   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
+   var myPromise = Sk.misceval.asyncToPromise(function() {
+       return Sk.importMainWithBody("<stdin>", false, prog, true);
+   });
+   myPromise.then(function(mod) {
+       console.log('success');
+   },
+       function(err) {
+       console.log(err.toString());
+   });
+}
+</script>
+
+<h3>Try This</h3>
+<form>
+<textarea id="yourcode" cols="40" rows="10">
+import time
+import random
+
+"""
+Board file, should only be used from the game file,
+and not manipulated directly.
+"""
+
+class Board(object):
+    """
+    Board Class used to hold a respresentation of the current Game Board
+    By Daniel Anderson
+    """
+    def __init__(self):
+        """#creates a new empty game board
+        #2d array of 0 Empty, 1 Human, 2 Computer
+        """
+        self.game_board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+    def winning_board(self):
+        """
+        checks to see if this board has a winner
+        """
+        #horizontal and vertical
+        for i in range(0, 2):
+            if self.game_board[i][0] == self.game_board[i][1] == self.game_board[i][2] != 0:
+                return True
+            if self.game_board[0][i] == self.game_board[1][i] == self.game_board[2][i] != 0:
+                return True
+
+        #diagonals
+        if self.game_board[0][0] == self.game_board[1][1] == self.game_board[2][2] != 0:
+            return True
+        if self.game_board[0][2] == self.game_board[1][1] == self.game_board[2][0] != 0:
+            return True
+
+        return False
+
+    def can_put(self, xcoord, ycoord):
+        """Return true or false if a new piece can be place at that position
+        Arguments:
+            xcoord- row index,
+            ycoord - y index
+        """
+        return self.game_board[xcoord][ycoord] == 0
+
+    def put(self, xcoord, ycoord, player):
+        """Places a new tile on the game board
+        player must be [1, 2]
+        xcoord, ycoord must be [0, 1, 2]
+        """
+        self.game_board[xcoord][ycoord] = player
+
+    def out_of_moves(self):
+        """returns true if there are no more available squares """
+        for i in self.game_board:
+            for j in i:
+                if j == 0:
+                    return False
+        return True
+
+    #returns a list of all possible moves
+    def possible_moves(self):
+        """returns a list of all possible moves """
+        move_list = []
+        for i in range(0, 3):
+            for j in range(0, 3):
+                if self.game_board[i][j] == 0:
+                    move_list.append([i, j])
+        return move_list
+
+    def optimal_move(self):
+        """return the best move out of the list of moves"""
+        move_list = self.possible_moves()
+        return move_list[0]
+
+    def print_board(self):
+        """Displays the game board"""
+        print '----------'
+        for i in self.game_board:
+            print i
+        print "--------------"
+
+
+"""
+The Game file used to play TicTacToe
+By Daniel Anderson
+To start the game please run 'python game.py'
+"""
+
+class Game(object):
+    """The game object used to run the game"""
+    def __init__(self):
+        self.board = Board()
+        display_game_info()
+        self.collect_player_info()
+        self.playx()
+        self.curr_player = 1
+
+    def switch_playcoorders(self):
+        """Used to switch players during the game."""
+        if self.curr_player == 1:
+            self.curr_player = 2
+        else:
+            self.curr_player = 1
+
+    def collect_player_info(self):
+        """collects the initial information about each player"""
+        #get the users name
+        self.player_name = raw_input('Enter your name: ')
+        #who goes first
+        while True:
+            print "Please tell us who should go first"
+            print "0 -- RANDOM"
+            print "1 -- HUMAN"
+            print "2 -- COMPUTER"
+            self.curr_player = int(raw_input("Please enter a 0, 1, or 2: "))
+            if self.curr_player in [0, 1, 2]:
+                if self.curr_player == 0:
+                    self.curr_player = random.randint(1, 2)
+                    break
+                else:
+                    print "I am sorry, we didnt not recognize the input, try again \n"
+
+    def playx(self):
+        """The bulk of the game, it mainly has one running loop
+        Where you continue to input moves to the game"""
+        print "----------------- HAVE FUN ----------------- "
+        while not self.board.out_of_moves():
+            print "Here is the current Board"
+            self.board.print_board()
+            if self.curr_player == 1:
+                print "It is currently your turn " + self.player_name
+                print "Good Luck."
+                xcoord = int(raw_input("Please input the x coordinate of your move"))
+                ycoord = int(raw_input("Please input the y coordinate of your move"))
+                if xcoord in [0, 1, 2] and ycoord in [0, 1, 2]:
+                    if self.board.can_put(xcoord, ycoord):
+                        self.board.put(xcoord, ycoord, self.curr_player)
+                        if self.board.winning_board():
+                            print "Congradulations" + self.player_name + ", you won!"
+                            break
+                        self.switch_playcoorders()
+                    else:
+                        print "your input a valid position, but that position isn't available"
+                else:
+                    print "Those coordinates are not valid, please try again"
+            else:
+                print "It is currently the computers turn:"
+                print "Please Wait while he makes a move"
+                time.sleep(2)
+                optimal_move = self.board.optimal_move()
+                self.board.put(optimal_move[0], optimal_move[1], self.curr_player)
+                if self.board.winning_board():
+                    print "Too bad the computer won."
+                    break
+                self.switch_playcoorders()
+        print "Here was the winning Board:"
+        print self.board.print_board()
+        print "Thank you for playing"
+        print "This Game was made by Daniel Anderson"
+
+def display_game_info():
+    """Basic function to display game info"""
+    print "Welcome to my version of Tic Tac Toe\n"
+    print "By Daniel Anderson\n"
+    print "I hope you came ready to play\n"
+
+#executing the game
+Game()
+
+
+</textarea><br />
+<button type="button" onclick="runit()">Run</button>
+</form>
+<pre id="output" ></pre>
+<!-- If you want turtle graphics include a canvas -->
+<div id="mycanvas"></div>
+
+</body>
+
+</html>
