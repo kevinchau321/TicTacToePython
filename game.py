@@ -27,7 +27,7 @@ class Game(object):
     def collect_player_info(self):
         """collects the initial information about each player"""
         #get the users name
-        self.player_name = raw_input('Enter ycoordour name: ')
+        self.player_name = raw_input('Enter your name: ')
         #who goes first
         while True:
             print "Please tell us who should go first"
@@ -40,7 +40,7 @@ class Game(object):
                     self.curr_player = random.randint(1, 2)
                     break
                 else:
-                    print "I am sorrycoord, we didnt not recognize the input, trycoord again \n"
+                    print "I am sorry, we didnt not recognize the input, try again \n"
 
     def playx(self):
         """The bulk of the game, it mainly has one running loop
@@ -50,23 +50,23 @@ class Game(object):
             print "Here is the current Board"
             self.board.print_board()
             if self.curr_player == 1:
-                print "It is currentlycoord ycoordour turn " + self.player_name
+                print "It is currently your turn " + self.player_name
                 print "Good Luck."
-                xcoord = int(raw_input("Please input the xcoord coordinate of ycoordour move"))
-                ycoord = int(raw_input("Please input the ycoord coordinate of ycoordour move"))
+                xcoord = int(raw_input("Please input the xcoord coordinate of your move"))
+                ycoord = int(raw_input("Please input the ycoord coordinate of your move"))
                 if xcoord in [0, 1, 2] and ycoord in [0, 1, 2]:
                     if self.board.can_put(xcoord, ycoord):
                         self.board.put(xcoord, ycoord, self.curr_player)
                         if self.board.winning_board():
-                            print "Congradulations" + self.player_name + ", ycoordou won!"
+                            print "Congradulations" + self.player_name + ", you won!"
                             break
                         self.switch_playcoorders()
                     else:
-                        print "ycoordou input a valid position, but that position isn't available"
+                        print "your input a valid position, but that position isn't available"
                 else:
-                    print "Those coordinates are not valid, please trycoord again"
+                    print "Those coordinates are not valid, please try again"
             else:
-                print "It is currentlycoord the computers turn:"
+                print "It is currently the computers turn:"
                 print "Please Wait while he makes a move"
                 time.sleep(2)
                 optimal_move = self.board.optimal_move()
@@ -77,14 +77,14 @@ class Game(object):
                 self.switch_playcoorders()
         print "Here was the winning Board:"
         print self.board.print_board()
-        print "Thank ycoordou for playcoording"
-        print "This Game was made bycoord Daniel Anderson"
+        print "Thank you for playing"
+        print "This Game was made by Daniel Anderson"
 
 def display_game_info():
     """Basic function to display game info"""
     print "Welcome to my version of Tic Tac Toe\n"
     print "By Daniel Anderson\n"
-    print "I hope you came readycoord to play\n"
+    print "I hope you came ready to play\n"
 
 #executing the game
 Game()
